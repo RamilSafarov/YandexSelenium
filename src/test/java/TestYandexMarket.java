@@ -22,8 +22,10 @@ public class TestYandexMarket {
     private static final String inputFrom = "//input[@name='Цена от']";
     private static final String inputTo = "//input[@name='Цена до']";
     private static final String deliveryButton = "//span[text()='Доставка курьером']/parent::div";
+    private static final String showallButton = "//legend[text()='Производитель']/following-sibling::footer/button[text()='Показать всё']";
+    private static final String inputManufacturer = "//input[@name='Поле поиска']";
     private static final String checkboxManufacturer = "//input[@name='Производитель Dreamies']/parent::label";
-    private static final String selectFirst = "(//div[@data-zone-name=\"snippetList\"]/child::article[1])[1]/child::div[4]/child::div/child::h3/child::a";
+    private static final String selectFirst = "(//article[@data-zone-name=\"snippet-cell\"])[1]";
 
     @BeforeEach
     public void setUp() {
@@ -57,10 +59,16 @@ public class TestYandexMarket {
         WebElement goodiesElement = webDriver.findElement(By.xpath(goodiesButton));
         goodiesElement.click();
 
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.SECONDS.sleep(3);
 
         WebElement deliveryElement = webDriver.findElement(By.xpath(deliveryButton));
         deliveryElement.click();
+
+        WebElement showallElement = webDriver.findElement(By.xpath(showallButton));
+        showallElement.click();
+
+        TimeUnit.SECONDS.sleep(2);
+        webDriver.findElement(By.xpath(inputManufacturer)).sendKeys("Dreamies");
 
         WebElement manufacturerElement = webDriver.findElement(By.xpath(checkboxManufacturer));
         manufacturerElement.click();
@@ -76,7 +84,8 @@ public class TestYandexMarket {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(3);
         webDriver.quit();
     }
 
