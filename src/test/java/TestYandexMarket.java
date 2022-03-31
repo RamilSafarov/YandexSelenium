@@ -22,10 +22,12 @@ public class TestYandexMarket {
     private static final String inputFrom = "//input[@name='Цена от']";
     private static final String inputTo = "//input[@name='Цена до']";
     private static final String deliveryButton = "//span[text()='Доставка курьером']/parent::div";
+    private static final String deliveryButton2 = "//span[text()='Курьером']/parent::span";
     private static final String showallButton = "//legend[text()='Производитель']/following-sibling::footer/button[text()='Показать всё']";
     private static final String inputManufacturer = "//input[@name='Поле поиска']";
     private static final String checkboxManufacturer = "//input[@name='Производитель Dreamies']/parent::label";
-    private static final String selectFirst = "(//article[@data-zone-name=\"snippet-cell\"])[1]";
+    private static final String selectFirst = "(//article[@data-zone-name=\"snippet-cell\"])[1]/descendant::a[@data-node-name='title']";
+    private static final String selectCompare = "//span[text()='Сравнить']/parent::div";
 
     @BeforeEach
     public void setUp() {
@@ -61,14 +63,25 @@ public class TestYandexMarket {
 
         TimeUnit.SECONDS.sleep(3);
 
-        WebElement deliveryElement = webDriver.findElement(By.xpath(deliveryButton));
-        deliveryElement.click();
+       // ((JavascriptExecutor) WebDriver).executeScript();
+        try {
+            WebElement deliveryElement = webDriver.findElement(By.xpath(deliveryButton));
+            deliveryElement.click();
+        }
+        catch (NoSuchElementException e){
+            WebElement deliveryElement2 = webDriver.findElement(By.xpath(deliveryButton2));
+            deliveryElement2.click();
+        }
 
-        WebElement showallElement = webDriver.findElement(By.xpath(showallButton));
-        showallElement.click();
-
-        TimeUnit.SECONDS.sleep(2);
-        webDriver.findElement(By.xpath(inputManufacturer)).sendKeys("Dreamies");
+        try{
+            WebElement showallElement = webDriver.findElement(By.xpath(showallButton));
+            showallElement.click();
+            TimeUnit.SECONDS.sleep(2);
+            webDriver.findElement(By.xpath(inputManufacturer)).sendKeys("Dreamies");
+        } catch (NoSuchElementException e){
+            TimeUnit.SECONDS.sleep(2);
+            webDriver.findElement(By.xpath(inputManufacturer)).sendKeys("Dreamies");
+        }
 
         WebElement manufacturerElement = webDriver.findElement(By.xpath(checkboxManufacturer));
         manufacturerElement.click();
@@ -80,6 +93,13 @@ public class TestYandexMarket {
 
         WebElement firstElement = webDriver.findElement(By.xpath(selectFirst));
         firstElement.click();
+
+        for (String windowHandle : webDriver.getWindowHandles()) {
+            webDriver.switchTo().window(windowHandle);
+        }
+
+        WebElement compareElement = webDriver.findElement(By.xpath(selectCompare));
+        compareElement.click();
 
     }
 
